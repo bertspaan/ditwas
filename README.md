@@ -6,7 +6,7 @@ Installeren:
 
     npm install -g bertspaan/ditwas
 
-Gebruiken
+Gebruiken:
 
     ditwas foto.jpg
 
