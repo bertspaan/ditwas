@@ -1,0 +1,25 @@
+{
+  "name": "ditwas",
+  "version": "0.0.1",
+  "description": "Handig! Lekker automatisch ditwassen!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "ditwas": "index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bertspaan/ditwas.git"
+  },
+  "author": "Bert Spaan",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^1.1.1",
+    "exif": "^0.4.0",
+    "highland": "^2.5.1",
+    "minimist": "^1.2.0",
+    "mkdirp": "^0.5.1"
+  }
+}
