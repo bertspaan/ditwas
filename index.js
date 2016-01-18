@@ -33,12 +33,12 @@ var toDecimal = function(degreeArray, ref) {
     sign = -1;
   }
 
-  var degrees = degreeArray[0] * sign;
+  var degrees = degreeArray[0];
   var minutes = degreeArray[1];
   var seconds = degreeArray[2];
 
   var decimals = 1000000;
-  return Math.round((degrees + minutes / 60 + seconds / 3600) * decimals) / decimals;
+  return Math.round((degrees + minutes / 60 + seconds / 3600) * sign * decimals) / decimals;
 }
 
 var exif = function(data, callback) {
