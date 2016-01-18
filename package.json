@@ -1,6 +1,6 @@
 {
   "name": "ditwas",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Handig! Lekker automatisch ditwassen!",
   "main": "index.js",
   "scripts": {

@@ -27,15 +27,44 @@ var askQuestion = H.wrapCallback(function(question, callback) {
   });
 });
 
-var exifDate = function(data, callback) {
+var toDecimal = function(degreeArray, ref) {
+  var sign = 1;
+  if (ref.toLowerCase() === 'w' || ref.toLowerCase() === 's') {
+    sign = -1;
+  }
+
+  var degrees = degreeArray[0] * sign;
+  var minutes = degreeArray[1];
+  var seconds = degreeArray[2];
+
+  var decimals = 1000000;
+  return Math.round((degrees + minutes / 60 + seconds / 3600) * decimals) / decimals;
+}
+
+var exif = function(data, callback) {
   new ExifImage({image: data.filename}, function (error, exifData) {
     if (error) {
       callback(error)
     } else {
       var createDate = exifData.exif.CreateDate;
       var date = createDate.slice(0, 10).replace(/:/g, '-');
-      console.log(`Deze doen: ${chalk.underline(data.filename)}, datum ${date}`)
-      callback(null, Object.assign(data, {date: date}));
+
+      var newData = {
+        date: date
+      };
+
+      if (exifData.gps) {
+        newData.coordinates = [
+          toDecimal(exifData.gps.GPSLongitude, exifData.gps.GPSLongitudeRef),
+          toDecimal(exifData.gps.GPSLatitude, exifData.gps.GPSLatitudeRef)
+        ]
+      }
+
+      console.log(
+        `Deze doen: ${chalk.underline(data.filename)}, datum ${date}` +
+        (newData.coordinates ? `, positie ${newData.coordinates.join(', ')}` : '')
+      )
+      callback(null, Object.assign(data, newData));
     }
   });
 }
@@ -73,14 +102,25 @@ var createHtml = function(data, callback) {
   var htmlDir = path.join(config.website, data.date);
   var htmlFilename = path.join(htmlDir, data.newFilename + '.html');
 
-  var contents = [
+  var lines = [
     '---',
-    `title: ${data.title}`,
+    `title: ${data.title}`
+  ];
+
+  if (data.coordinates) {
+    lines.push(
+      'coordinates: ' + JSON.stringify(data.coordinates)
+    );
+  }
+
+  lines.push(
     '---',
     '',
     data.contents,
-    '\n',
-  ].join('\n')
+    '\n'
+  );
+
+  var contents = lines.join('\n');
 
   mkdirp.sync(htmlDir);
   fs.writeFileSync(htmlFilename, contents)
@@ -102,7 +142,7 @@ var s3Photo = function(data, callback) {
 
 H(argv._)
   .map(filename => ({filename: filename}))
-  .map(H.curry(exifDate))
+  .map(H.curry(exif))
   .nfcall([])
   .series()
   .map(H.curry(askQuestions))
