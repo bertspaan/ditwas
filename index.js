@@ -53,7 +53,7 @@ var exif = function(data, callback) {
         date: date
       };
 
-      if (exifData.gps) {
+      if (exifData.gps && exifData.gps.GPSLongitude && exifData.gps.GPSLongitudeRef) {
         newData.coordinates = [
           toDecimal(exifData.gps.GPSLongitude, exifData.gps.GPSLongitudeRef),
           toDecimal(exifData.gps.GPSLatitude, exifData.gps.GPSLatitudeRef)
